@@ -1,0 +1,10 @@
+# Credenciales — nunca al repo
+.env
+
+# Uploads locales
+uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

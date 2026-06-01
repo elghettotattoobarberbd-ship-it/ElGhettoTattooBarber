@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dejá tu reseña · El Ghetto</title>
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:    #0d0d0d;
+    --bg:     #111111;
+    --bg-2:   #181818;
+    --bg-3:   #222222;
+    --yellow: #f5c518;
+    --bone:   #e8e0d0;
+    --bone-dim: #a09880;
+    --border: rgba(255,255,255,.1);
+    --border-strong: rgba(255,255,255,.18);
+    --red:    #e25c5c;
+    --font-mono:    'JetBrains Mono', monospace;
+    --font-stencil: 'Rubik Mono One', sans-serif;
+    --font-body:    'Space Grotesk', sans-serif;
+  }
+
+  html, body { background: var(--bg); color: var(--bone); font-family: var(--font-body); min-height: 100dvh; }
+
+  #root { min-height: 100dvh; display: flex; flex-direction: column; }
+
+  .page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px 48px;
+    gap: 0;
+  }
+
+  .logo-mark {
+    font-family: var(--font-stencil);
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    color: var(--yellow);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-2);
+    border: 1.5px solid var(--border-strong);
+    padding: 32px 28px 28px;
+  }
+
+  .card-title {
+    font-family: var(--font-stencil);
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 4px;
+  }
+  .card-title span { color: var(--yellow); }
+  .card-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--bone-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 28px;
+  }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--bg-3);
+    border: 1.5px solid var(--border-strong);
+    color: var(--bone);
+    font-family: var(--font-body);
+    font-size: 15px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 120ms;
+    border-radius: 0;
+    -webkit-appearance: none;
+  }
+  .form-input:focus { border-color: var(--yellow); }
+  textarea.form-input { resize: vertical; min-height: 100px; }
+
+  .stars-row { display: flex; gap: 8px; }
+  .star-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--border-strong);
+    transition: color 120ms, transform 100ms;
+  }
+  .star-btn.on  { color: var(--yellow); }
+  .star-btn:hover { transform: scale(1.15); }
+
+  .service-row { display: flex; gap: 10px; }
+  .svc-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-3);
+    border: 1.5px solid var(--border-strong);
+    color: var(--bone-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 120ms;
+  }
+  .svc-btn.active { border-color: var(--yellow); color: var(--yellow); background: rgba(245,197,24,.08); }
+
+  .btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: var(--yellow);
+    color: var(--ink);
+    border: none;
+    font-family: var(--font-stencil);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 150ms;
+  }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .err-msg {
+    background: rgba(226,92,92,.12);
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+
+  /* Success screen */
+  .success {
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-2);
+    border: 1.5px solid var(--yellow);
+    padding: 48px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .success-icon { font-size: 48px; line-height: 1; }
+  .success-title {
+    font-family: var(--font-stencil);
+    font-size: 24px;
+    text-transform: uppercase;
+  }
+  .success-title span { color: var(--yellow); }
+  .success-sub { color: var(--bone-dim); font-size: 14px; line-height: 1.6; max-width: 280px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="admin/config.js"></script>
+<script src="admin/client.js"></script>
+
+<script type="text/babel">
+function ReviewPage() {
+  const [done,    setDone]    = React.useState(false);
+  const [name,    setName]    = React.useState('');
+  const [rating,  setRating]  = React.useState(0);
+  const [hover,   setHover]   = React.useState(0);
+  const [body,    setBody]    = React.useState('');
+  const [service, setService] = React.useState('');
+  const [busy,    setBusy]    = React.useState(false);
+  const [err,     setErr]     = React.useState('');
+
+  const canSubmit = name.trim() && rating > 0 && body.trim().length >= 10;
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setBusy(true); setErr('');
+    try {
+      if (!window.sb) throw new Error('Sin conexion a la base de datos.');
+      const { error } = await window.sb.from('testimonials').insert({
+        client_name:  name.trim(),
+        rating,
+        body:         body.trim(),
+        service_type: service || null,
+        is_published: false,
+      });
+      if (error) throw error;
+      setDone(true);
+    } catch (ex) {
+      setErr((ex && ex.message) || 'Algo salio mal. Intentalo de nuevo.');
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <div className="page">
+      <div className="logo-mark">El Ghetto · Tattoo & Barber</div>
+
+      {done ? (
+        <div className="success">
+          <div className="success-icon">🖤</div>
+          <div className="success-title">Gracias por tu <span>reseña!</span></div>
+          <p className="success-sub">
+            La recibimos y la vamos a revisar antes de publicarla. Tu opinión nos ayuda un montón.
+          </p>
+        </div>
+      ) : (
+        <div className="card">
+          <div className="card-title">Tu <span>reseña</span></div>
+          <div className="card-sub">Contanos como fue tu experiencia en el estudio</div>
+
+          <form onSubmit={submit}>
+            {/* Nombre */}
+            <div className="form-group">
+              <label className="form-label">Tu nombre</label>
+              <input className="form-input" value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Nico M." maxLength={60}/>
+            </div>
+
+            {/* Estrellas */}
+            <div className="form-group">
+              <label className="form-label">Puntuacion</label>
+              <div className="stars-row">
+                {[1,2,3,4,5].map((n) => (
+                  <button key={n} type="button"
+                    className={'star-btn' + ((hover || rating) >= n ? ' on' : '')}
+                    onClick={() => setRating(n)}
+                    onMouseEnter={() => setHover(n)}
+                    onMouseLeave={() => setHover(0)}>
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Servicio */}
+            <div className="form-group">
+              <label className="form-label">Servicio (opcional)</label>
+              <div className="service-row">
+                <button type="button" className={'svc-btn' + (service === 'tatuaje' ? ' active' : '')}
+                  onClick={() => setService(service === 'tatuaje' ? '' : 'tatuaje')}>
+                  Tatuaje
+                </button>
+                <button type="button" className={'svc-btn' + (service === 'barber' ? ' active' : '')}
+                  onClick={() => setService(service === 'barber' ? '' : 'barber')}>
+                  Barberia
+                </button>
+              </div>
+            </div>
+
+            {/* Texto */}
+            <div className="form-group">
+              <label className="form-label">Tu experiencia</label>
+              <textarea className="form-input" value={body}
+                onChange={(e) => setBody(e.target.value)}
+                placeholder="Contanos como te fue, que te hiciste, como te trataron..."
+                maxLength={500}/>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--bone-dim)', marginTop: 4, textAlign: 'right' }}>
+                {body.length}/500
+              </div>
+            </div>
+
+            {err && <div className="err-msg">{err}</div>}
+
+            <button type="submit" className="btn-submit" disabled={!canSubmit || busy}>
+              {busy ? 'Enviando...' : 'Enviar resena'}
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ReviewPage/>);
+</script>
+</body>
+</html>
