@@ -2793,6 +2793,25 @@ body::before {
   flex-direction: column;
   gap: 2px;
 }
+.btn-share-course {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 13px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  background: transparent;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.btn-share-course:hover { color: var(--yellow); border-color: var(--yellow); }
+.btn-share-course.copied { color: #4ade80; border-color: #4ade80; }
 .course-price-num {
   font-family: var(--font-display);
   font-size: 28px;

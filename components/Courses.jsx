@@ -70,7 +70,7 @@ function CourseCard({ course, idx }) {
   const waLink = `https://wa.me/${STUDIO.phoneIntl.replace(/\D/g, '')}?text=${encodeURIComponent(waMsg)}`;
 
   return (
-    <article className={`course-card ${isSoon ? 'is-soon' : ''}`} style={{ '--i': idx }}>
+    <article id={`curso-${course.id}`} className={`course-card ${isSoon ? 'is-soon' : ''}`} style={{ '--i': idx }}>
       <div className="course-card-head">
         {course.cover_url
           ? <img src={course.cover_url} alt={course.title}/>
@@ -110,9 +110,12 @@ function CourseCard({ course, idx }) {
                 </>
               : <span className="course-price-lbl" style={{ color: 'var(--yellow)' }}>Consultar precio</span>}
           </div>
-          <a href={waLink} target="_blank" rel="noopener" className="btn btn-primary" style={{ padding: '12px 18px', fontSize: 13 }}>
-            <Icon name="whatsapp" size={14}/> {isSoon ? 'Avisame' : 'Anotarme'}
-          </a>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <ShareCourseBtn courseId={course.id} title={course.title}/>
+            <a href={waLink} target="_blank" rel="noopener" className="btn btn-primary" style={{ padding: '12px 18px', fontSize: 13 }}>
+              <Icon name="whatsapp" size={14}/> {isSoon ? 'Avisame' : 'Anotarme'}
+            </a>
+          </div>
         </div>
 
         {course.vacancies && !isSoon && (
@@ -182,6 +185,43 @@ function CoursePlaceholder({ seed = 1, category = '' }) {
             fontFamily="'JetBrains Mono', monospace" fontSize="9"
             fill="var(--yellow)" opacity="0.6" letterSpacing="4">EL GHETTO STUDIO</text>
     </svg>
+  );
+}
+
+function ShareCourseBtn({ courseId, title }) {
+  const [state, setState] = React.useState('idle'); // idle | copied | error
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#curso-${courseId}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `Curso: ${title}`, url });
+        return;
+      } catch (e) {
+        if (e.name === 'AbortError') return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setState('copied');
+      setTimeout(() => setState('idle'), 2200);
+    } catch {
+      setState('error');
+      setTimeout(() => setState('idle'), 2200);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      className={`btn-share-course${state === 'copied' ? ' copied' : ''}`}
+      title="Copiar enlace del curso"
+      type="button"
+    >
+      {state === 'copied'
+        ? <><Icon name="check" size={13}/> Copiado</>
+        : <><Icon name="link" size={13}/> Compartir</>}
+    </button>
   );
 }
 

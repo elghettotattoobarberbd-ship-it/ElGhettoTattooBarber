@@ -21,6 +21,8 @@ function Icon({ name, size = 20, ...rest }) {
     grid: <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>,
     syringe: <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}><path d="m18 2 4 4M17 3l4 4M13 7l4 4M19 11l-7 7-3 1-1-1-3 3M7 17l3 3"/></svg>,
     scissors: <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="m20 4-9.5 9.5M14 14l6 6M8.1 8.1 12 12"/></svg>,
+    link: <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
+    check: <svg width={s} height={s} viewBox="0 0 24 24" {...stroke}><path d="M20 6 9 17l-5-5"/></svg>,
   };
   return <span style={{ display: 'inline-flex' }} {...rest}>{map[name] || null}</span>;
 }
