@@ -39,7 +39,7 @@ function App({ page }) {
         {page === 'cursos' && (
           <React.Fragment>
             <PageHeader
-              num="04"
+              num="03"
               eyebrow="Capacitaciones"
               title="Cursos del "
               accent="estudio."
@@ -81,7 +81,7 @@ function App({ page }) {
         {page === 'reservar' && (
           <React.Fragment>
             <PageHeader
-              num="03"
+              num="04"
               eyebrow="Reservar"
               title="Sacate "
               accent="el turno."
@@ -96,7 +96,7 @@ function App({ page }) {
         {page === 'contacto' && (
           <React.Fragment>
             <PageHeader
-              num="04"
+              num="05"
               eyebrow="Encontranos"
               title="Vení al "
               accent="estudio."
