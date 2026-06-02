@@ -30,7 +30,7 @@ function Testimonials() {
   return (
     <section className="section" id="testimonios" style={{ background: 'var(--bg-2)' }}>
       <div className="container">
-        <div className="eyebrow">04 · Boca a boca</div>
+        <div className="eyebrow">04 · Testimonios</div>
         <h2 className="section-title">
           <span>Lo que </span>
           <span className="yellow">cuentan </span>
@@ -119,7 +119,7 @@ function TestimonialsMarquee() {
     <div style={{ padding: '60px 0', background: 'var(--bg)', borderTop: '1px solid var(--border)' }}>
       {/* Encabezado */}
       <div className="container" style={{ marginBottom: 32 }}>
-        <div className="eyebrow">Boca a boca</div>
+        <div className="eyebrow">Testimonios</div>
         <h2 className="section-title" style={{ fontSize: 'clamp(28px,5vw,48px)' }}>
           <span>Lo que dicen </span>
           <span className="yellow">nuestros </span>

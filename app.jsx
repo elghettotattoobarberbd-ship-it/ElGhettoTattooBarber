@@ -55,10 +55,9 @@ function App({ page }) {
             <PageHeader
               num="01"
               eyebrow="Portfolio"
-              title="El"
-              accent="muro."
-              stroke="Lo que dejamos marcado."
-              subtitle="Tatuajes y cortes hechos en el estudio. Filtrá por estilo, tocá una pieza para ver el detalle."
+              title="Descubrí nuestros"
+              accent="tatuajes y cortes."
+              subtitle=""
               breadcrumb="Galería"
             />
             <Gallery density={t.galleryDensity} onOpen={setModalItem}/>
@@ -70,10 +69,9 @@ function App({ page }) {
             <PageHeader
               num="02"
               eyebrow="El equipo"
-              title="Dos "
-              accent="manos"
-              stroke=", un solo estudio."
-              subtitle="Una tatuadora resident y un equipo de barberos profesionales bajo el mismo techo."
+              title="Las manos detrás de"
+              accent="cada trabajo."
+              subtitle="Una tatuadora y un equipo de barberos profesionales bajo el mismo techo."
               breadcrumb="Artistas"
             />
             <ArtistSection/>
@@ -87,7 +85,6 @@ function App({ page }) {
               eyebrow="Reservar"
               title="Sacate "
               accent="el turno."
-              subtitle="Armá tu pedido en 4 pasos y te abrimos WhatsApp con el mensaje listo. Sin formularios eternos."
               breadcrumb="Reservar"
             />
             <Booking/>

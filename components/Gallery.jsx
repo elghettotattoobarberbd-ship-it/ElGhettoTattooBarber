@@ -2,13 +2,85 @@
 // Tabbed gallery: Tatuajes / Cortes — each with its own filters.
 // Layout: polaroid-style cards pinned on a wall (masonry-ish, rotated, with tape).
 
+const isVideoUrl = (url) => url && /\.(mp4|webm|mov)$/i.test(url);
+
+function PolaroidCard({ it, i, isTat, styleLabel, onOpen }) {
+  const [showBefore, setShowBefore] = React.useState(false);
+  const hasBefore = !!it.before_url;
+  const activeUrl = hasBefore && showBefore ? it.before_url : (it.image_url || null);
+  const isVid = isVideoUrl(activeUrl);
+  const videoAspect = it.width && it.height ? (it.height > it.width ? '9/16' : '16/9') : '16/9';
+
+  const renderMedia = () => {
+    if (activeUrl) {
+      if (isVid) {
+        return (
+          <video autoPlay muted loop playsInline preload="auto"
+            src={activeUrl}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', background: '#000' }}
+          />
+        );
+      }
+      const src = (!showBefore && it.thumb_url) ? it.thumb_url : activeUrl;
+      return <img src={src} alt={it.title || ''} loading="lazy" />;
+    }
+    return isTat
+      ? <TattooPlaceholder id={it.id} style={it.style} hue={it.hue} light={it.light}/>
+      : <BarberPlaceholder id={it.id} style={it.style} hue={it.hue} light={it.light}/>;
+  };
+
+  return (
+    <article
+      className="polaroid"
+      style={{ '--i': i }}
+      onClick={() => onOpen && onOpen({ ...it, _kind: isTat ? 'tatuajes' : 'cortes' })}
+    >
+      <div className="polaroid-tape"></div>
+      <div className="polaroid-image" style={{ position: 'relative', ...(isVid ? { aspectRatio: videoAspect } : {}) }}>
+        {renderMedia()}
+        {hasBefore && (
+          <div style={{
+            position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)',
+            display: 'flex', background: 'rgba(0,0,0,0.78)', borderRadius: 3,
+            overflow: 'hidden', zIndex: 2, fontFamily: 'var(--font-mono)',
+            fontSize: 9, letterSpacing: '0.1em',
+          }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowBefore(true); }}
+              style={{ padding: '4px 9px', border: 'none', cursor: 'pointer',
+                background: showBefore ? 'var(--yellow)' : 'transparent',
+                color: showBefore ? '#000' : 'rgba(255,255,255,0.55)' }}
+            >ANTES</button>
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowBefore(false); }}
+              style={{ padding: '4px 9px', border: 'none', cursor: 'pointer',
+                background: !showBefore ? 'var(--yellow)' : 'transparent',
+                color: !showBefore ? '#000' : 'rgba(255,255,255,0.55)' }}
+            >DESPUÉS</button>
+          </div>
+        )}
+      </div>
+      <div className="polaroid-caption">
+        <div className="polaroid-title">{it.title}</div>
+        <div className="polaroid-meta">
+          <span>{styleLabel(it.style, it)}</span>
+          {hasBefore && (
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '0.08em', color: 'var(--yellow)', textTransform: 'uppercase' }}>
+              A/D
+            </span>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function Gallery({ density = "regular", onOpen }) {
   const [tab, setTab] = React.useState("tatuajes");
   const [filter, setFilter] = React.useState("todos");
-  const [dbStyles, setDbStyles] = React.useState(null); // null = loading
-  const [galleryItems, setGalleryItems] = React.useState(null); // null = loading/no db fallback
+  const [dbStyles, setDbStyles] = React.useState(null);
+  const [galleryItems, setGalleryItems] = React.useState(null);
 
-  // Load styles from Supabase if available
   React.useEffect(() => {
     (async () => {
       if (!window.sb) { setDbStyles({}); return; }
@@ -28,10 +100,7 @@ function Gallery({ density = "regular", onOpen }) {
 
   React.useEffect(() => {
     (async () => {
-      if (!window.sb) {
-        setGalleryItems(null);
-        return;
-      }
+      if (!window.sb) { setGalleryItems(null); return; }
       try {
         const { data, error } = await window.sb
           .from('gallery_items')
@@ -52,7 +121,6 @@ function Gallery({ density = "regular", onOpen }) {
     })();
   }, []);
 
-  // Reset filter when switching tabs
   React.useEffect(() => { setFilter("todos"); }, [tab]);
 
   const isTat = tab === "tatuajes";
@@ -76,33 +144,6 @@ function Gallery({ density = "regular", onOpen }) {
   const styleLabel = (slug, item) => {
     if (item?.styleLabel) return item.styleLabel;
     return (stylesList.find((s) => s.slug === slug) || {}).label || slug || '—';
-  };
-
-  const isVideoUrl = (url) => url && /\.(mp4|webm|mov)$/i.test(url);
-  const videoAspect = (it) => {
-    if (!it || !it.width || !it.height) return '16/9';
-    return it.height > it.width ? '9/16' : '16/9';
-  };
-  const renderTile = (it) => {
-    if (it.image_url) {
-      if (isVideoUrl(it.image_url)) {
-        return (
-          <video
-            src={it.image_url}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', background: '#000' }}
-          />
-        );
-      }
-      return <img src={it.thumb_url || it.image_url} alt={it.title || ''} loading="lazy" />;
-    }
-    return isTat
-      ? <TattooPlaceholder id={it.id} style={it.style} hue={it.hue} light={it.light}/>
-      : <BarberPlaceholder id={it.id} style={it.style} hue={it.hue} light={it.light}/>;
   };
 
   return (
@@ -155,23 +196,14 @@ function Gallery({ density = "regular", onOpen }) {
         {/* POLAROID WALL */}
         <div className={`polaroid-wall density-${density}`} key={tab + filter}>
           {items.map((it, i) => (
-            <article
+            <PolaroidCard
               key={it.id}
-              className="polaroid"
-              style={{ '--i': i }}
-              onClick={() => onOpen && onOpen({ ...it, _kind: tab })}
-            >
-              <div className="polaroid-tape"></div>
-              <div className="polaroid-image" style={isVideoUrl(it.image_url) ? { aspectRatio: videoAspect(it) } : undefined}>
-                {renderTile(it)}
-              </div>
-              <div className="polaroid-caption">
-                <div className="polaroid-title">{it.title}</div>
-                <div className="polaroid-meta">
-                  <span>{styleLabel(it.style, it)}</span>
-                </div>
-              </div>
-            </article>
+              it={it}
+              i={i}
+              isTat={isTat}
+              styleLabel={styleLabel}
+              onOpen={onOpen}
+            />
           ))}
         </div>
 

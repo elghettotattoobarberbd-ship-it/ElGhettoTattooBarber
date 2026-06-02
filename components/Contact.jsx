@@ -258,13 +258,7 @@ function MapBlock({ mapEmbed, mapsUrl }) {
   return (
     <div className="map-block">
       {/* eyebrow + heading */}
-      <div className="map-head">
-        <div className="eyebrow">El punto en el mapa</div>
-        <h2 className="map-title">
-          <span className="yellow">X marca</span>
-          <span className="stroke"> el lugar.</span>
-        </h2>
-      </div>
+      {/* map header removed to avoid duplicate with PageHeader */}
 
       {/* map frame */}
       <div className="map-frame">

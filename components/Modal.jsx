@@ -1,5 +1,7 @@
 // components/Modal.jsx
 function GalleryModal({ item, onClose }) {
+  const [showBefore, setShowBefore] = React.useState(false);
+
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
@@ -12,9 +14,11 @@ function GalleryModal({ item, onClose }) {
 
   if (!item) return null;
   const isBarber = item._kind === 'cortes';
+  const hasBefore = !!item.before_url;
+  const activeUrl = hasBefore && showBefore ? item.before_url : item.image_url;
   const stylesList = isBarber ? BARBER_STYLES : TATTOO_STYLES;
   const styleLabel = (stylesList.find((s) => s.slug === item.style) || {}).label || item.style || '—';
-  const isVideo = item.image_url && /\.(mp4|webm|mov)$/i.test(item.image_url);
+  const isVideo = activeUrl && /\.(mp4|webm|mov)$/i.test(activeUrl);
   const videoAspect = () => {
     if (!item || !item.width || !item.height) return '16/9';
     return item.height > item.width ? '9/16' : '16/9';
@@ -31,11 +35,11 @@ function GalleryModal({ item, onClose }) {
         <button className="modal-close" onClick={onClose}>
           <Icon name="close" size={18}/>
         </button>
-        <div className="modal-image" style={isVideo ? { background: '#000', maxHeight: '70vh' } : undefined}>
-          {item.image_url ? (
-            /\.(mp4|webm|mov)$/i.test(item.image_url) ? (
+        <div className="modal-image" style={{ position: 'relative', ...(isVideo ? { background: '#000', maxHeight: '70vh' } : {}) }}>
+          {activeUrl ? (
+            isVideo ? (
               <video
-                src={item.image_url}
+                src={activeUrl}
                 controls
                 muted
                 playsInline
@@ -43,12 +47,33 @@ function GalleryModal({ item, onClose }) {
                 style={{ width: '100%', height: 'auto', maxHeight: '70vh', objectFit: 'contain', background: '#000' }}
               />
             ) : (
-              <img src={item.thumb_url || item.image_url} alt={item.title || ''} loading="lazy" />
+              <img src={(!showBefore && item.thumb_url) ? item.thumb_url : activeUrl} alt={item.title || ''} loading="lazy" />
             )
           ) : (isBarber
               ? <BarberPlaceholder id={item.id} style={item.style} hue={item.hue} light={item.light}/>
               : <TattooPlaceholder id={item.id} style={item.style} hue={item.hue} light={item.light}/>)
           }
+          {hasBefore && (
+            <div style={{
+              position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)',
+              display: 'flex', background: 'rgba(0,0,0,0.82)', borderRadius: 4,
+              overflow: 'hidden', zIndex: 2, fontFamily: 'var(--font-mono)',
+              fontSize: 11, letterSpacing: '0.12em',
+            }}>
+              <button
+                onClick={() => setShowBefore(true)}
+                style={{ padding: '6px 14px', border: 'none', cursor: 'pointer',
+                  background: showBefore ? 'var(--yellow)' : 'transparent',
+                  color: showBefore ? '#000' : 'rgba(255,255,255,0.55)' }}
+              >ANTES</button>
+              <button
+                onClick={() => setShowBefore(false)}
+                style={{ padding: '6px 14px', border: 'none', cursor: 'pointer',
+                  background: !showBefore ? 'var(--yellow)' : 'transparent',
+                  color: !showBefore ? '#000' : 'rgba(255,255,255,0.55)' }}
+              >DESPUÉS</button>
+            </div>
+          )}
         </div>
         <div className="modal-meta">
           <span className="style-tag">{isBarber ? 'Corte' : 'Tattoo'} · {styleLabel}</span>

@@ -133,6 +133,7 @@ function AdminGallery() {
                 )}
                 {!it.is_published && <span className="admin-badge">Oculta</span>}
                 {it.is_featured && <span className="admin-badge admin-badge-yellow">Destacada</span>}
+                {it.before_url && <span className="admin-badge admin-badge-yellow">A/D</span>}
               </div>
               <div className="admin-pizza-body">
                 <div className="admin-pizza-title">{it.title || 'Sin título'}</div>
@@ -172,17 +173,20 @@ function AdminGallery() {
 function GalleryEditor({ item, kind, onClose, onSaved }) {
   const isNew = !item;
   const [form, setForm] = React.useState(() => ({
-    title:        item?.title       || '',
-    caption:      item?.caption     || '',
-    style_slug:   item?.style?.slug || item?.style_slug || '',
-    tags:         (item?.tags || []).join(', '),
-    is_featured:  item?.is_featured || false,
-    is_published: item?.is_published ?? true,
-    sort_order:   item?.sort_order  ?? 0,
+    title:         item?.title       || '',
+    caption:       item?.caption     || '',
+    style_slug:    item?.style?.slug || item?.style_slug || '',
+    tags:          (item?.tags || []).join(', '),
+    is_featured:   item?.is_featured || false,
+    is_published:  item?.is_published ?? true,
+    sort_order:    item?.sort_order  ?? 0,
+    enable_before: !!item?.before_url,
   }));
   const [file, setFile] = React.useState(null);
   const [preview, setPreview] = React.useState(item?.image_url || '');
   const [previewType, setPreviewType] = React.useState(item?.image_url && /\.(mp4|webm|mov)$/i.test(item.image_url) ? 'video' : 'image');
+  const [beforeFile, setBeforeFile] = React.useState(null);
+  const [beforePreview, setBeforePreview] = React.useState(item?.before_url || '');
   const [busy, setBusy] = React.useState(false);
   const [err, setErr] = React.useState('');
   const [styles, setStyles] = React.useState(null); // loaded from DB
@@ -219,6 +223,11 @@ function GalleryEditor({ item, kind, onClose, onSaved }) {
     }
   };
 
+  const handleBeforeFile = (f) => {
+    setBeforeFile(f);
+    if (f) setBeforePreview(URL.createObjectURL(f));
+  };
+
   const save = async (e) => {
     e.preventDefault();
     setErr('');
@@ -237,6 +246,18 @@ function GalleryEditor({ item, kind, onClose, onSaved }) {
         image_url = pub.publicUrl;
       }
 
+      let before_url = form.enable_before ? (item?.before_url || null) : null;
+      if (form.enable_before && beforeFile) {
+        const bext = (beforeFile.name.split('.').pop() || 'jpg').toLowerCase();
+        const bpath = `${kind}/before-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${bext}`;
+        const bup = await window.sb.storage.from('gallery').upload(bpath, beforeFile, {
+          cacheControl: '3600', upsert: false, contentType: beforeFile.type,
+        });
+        if (bup.error) throw bup.error;
+        const { data: bpub } = window.sb.storage.from('gallery').getPublicUrl(bup.data.path);
+        before_url = bpub.publicUrl;
+      }
+
       const { width, height } = file
         ? await getFileDimensions(file)
         : { width: item?.width || null, height: item?.height || null };
@@ -251,6 +272,7 @@ function GalleryEditor({ item, kind, onClose, onSaved }) {
         is_published: !!form.is_published || !!form.is_featured,
         sort_order: Number(form.sort_order) || 0,
         image_url,
+        before_url: before_url || null,
         width: width || null,
         height: height || null,
       };
@@ -312,6 +334,30 @@ function GalleryEditor({ item, kind, onClose, onSaved }) {
               <input className="form-input" value={form.tags}
                 onChange={(e) => setForm({ ...form, tags: e.target.value })}
                 placeholder="rosa, brazo, b&g"/>
+            </div>
+
+            <div className="form-group">
+              <label className="admin-check">
+                <input type="checkbox" checked={form.enable_before}
+                  onChange={(e) => setForm({ ...form, enable_before: e.target.checked })}/>
+                <span>Activar antes/después</span>
+              </label>
+              {form.enable_before && (
+                <div style={{ marginTop: 12 }}>
+                  <label className="form-label" style={{ marginBottom: 8, display: 'block' }}>Foto del antes</label>
+                  <div className="admin-dropzone">
+                    {beforePreview
+                      ? <img src={beforePreview} alt="antes preview"/>
+                      : <span>Subí la foto del antes (solo imágenes)</span>
+                    }
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleBeforeFile(e.target.files?.[0])}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

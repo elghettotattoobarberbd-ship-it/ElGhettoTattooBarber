@@ -64,7 +64,7 @@ function ArtistSection() {
             </div>
 
             <div className="team-body">
-              <div className="role-line">Tatuadora · Resident artist</div>
+              <div className="role-line">Tatuadora · artist</div>
               <h3 className="team-name">{tattooName}</h3>
               <div className="team-handle">{tattooHnd}</div>
               <p className="team-bio">{tattooBio}</p>
