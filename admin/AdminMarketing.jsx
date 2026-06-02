@@ -1,7 +1,7 @@
 // admin/AdminMarketing.jsx — QR para banner del local y difusión
 
 function AdminMarketing() {
-  const siteUrl = window.location.origin + window.location.pathname.replace(/admin\/.*$/, '');
+  const siteUrl = window.location.origin + '/';
 
   const qrSmall = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=0d0d0d&bgcolor=ffd60a&data=' + encodeURIComponent(siteUrl);
   const qrHD    = 'https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&color=0d0d0d&bgcolor=ffd60a&data=' + encodeURIComponent(siteUrl);
@@ -14,7 +14,7 @@ function AdminMarketing() {
       const a    = document.createElement('a');
       a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
-    } catch {
+    } catch (e) {
       alert('No se pudo descargar. Intentá de nuevo.');
     }
   };
