@@ -27,7 +27,7 @@ function Hero({ variant = "stencil" }) {
 
           <div className="hero-art">
             <div className="art-frame">
-              <img src="assets/frentelocal.jpeg" alt="Frente local" className="hero-art-image" />
+              <img src="assets/frentelocal.jpeg" alt="Frente local" className="art-frame-image" />
             </div>
           </div>
         </div>
