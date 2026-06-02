@@ -52,6 +52,12 @@ function AdminShell({ user, section, onSection, children }) {
         { id: 'horarios', label: 'Horarios', icon: 'clock', hint: 'Bloques de atención' },
       ],
     },
+    {
+      label: 'Marketing',
+      items: [
+        { id: 'marketing', label: 'QR & Difusión', icon: 'mapPin', hint: 'QR para imprimir en el local' },
+      ],
+    },
   ];
 
   const logout = async () => { await AdminAuth.signOut(); };

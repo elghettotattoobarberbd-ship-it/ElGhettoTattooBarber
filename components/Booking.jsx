@@ -67,6 +67,7 @@ function Booking() {
     const msg = buildMessage();
     const url = `https://wa.me/${STUDIO.phoneIntl.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
+    setTimeout(function () { window.showPWABanner?.(); }, 1800);
   };
 
   const stepHead = (label) => (
