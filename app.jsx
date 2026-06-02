@@ -1,7 +1,7 @@
 // app.jsx — Router based on <div id="root" data-page="...">
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "theme": "dark",
-  "heroVariant": "photo",
+  "heroVariant": "stencil",
   "galleryDensity": "regular",
   "accentColor": "#ffd60a"
 }/*EDITMODE-END*/;
