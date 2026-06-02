@@ -1,7 +1,7 @@
 // components/Testimonials.jsx
 function Testimonials() {
   const [page, setPage] = React.useState(0);
-  const [list, setList] = React.useState(TESTIMONIALS);
+  const [list, setList] = React.useState([]);
 
   React.useEffect(() => {
     if (!window.sb) return;
@@ -26,6 +26,9 @@ function Testimonials() {
   });
 
   const initials = (name) => name.split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase();
+
+  // No mostrar la sección si no hay testimonios
+  if (list.length === 0) return null;
 
   return (
     <section className="section" id="testimonios" style={{ background: 'var(--bg-2)' }}>
@@ -91,7 +94,7 @@ window.Testimonials = Testimonials;
 
 // ── Marquee de reseñas (para usar debajo del formulario de reserva) ──
 function TestimonialsMarquee() {
-  const [list, setList] = React.useState(TESTIMONIALS);
+  const [list, setList] = React.useState([]);
 
   React.useEffect(() => {
     if (!window.sb) return;
@@ -114,6 +117,9 @@ function TestimonialsMarquee() {
 
   const base    = list.map(norm);
   const display = base.length < 4 ? [...base, ...base, ...base] : [...base, ...base];
+
+  // No mostrar si no hay testimonios
+  if (list.length === 0) return null;
 
   return (
     <div style={{ padding: '60px 0', background: 'var(--bg)', borderTop: '1px solid var(--border)' }}>
