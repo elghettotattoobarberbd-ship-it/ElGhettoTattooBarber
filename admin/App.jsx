@@ -52,7 +52,7 @@ function AdminApp() {
     horarios:    () => <AdminHorarios/>,
     reservas:    () => <AdminReservas/>,
     config:      () => <AdminConfig/>,
-    marketing:   () => <AdminMarketing/>,
+    marketing:   () => { const C = window.AdminMarketing; return C ? <C/> : <div className="admin-empty">Cargando…</div>; },
   };
 
   const renderSection = (sectionMap[section] || sectionMap.dashboard);

@@ -21,28 +21,22 @@ function AdminMarketing() {
 
   const print = () => {
     const w = window.open('', '_blank');
-    w.document.write(`
-      <!DOCTYPE html><html><head><title>QR El Ghetto</title>
-      <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#0d0d0d; color:#f4f1e8; font-family:sans-serif;
-               display:flex; flex-direction:column; align-items:center;
-               justify-content:center; min-height:100vh; gap:24px; padding:40px; }
-        .title { font-size:48px; font-weight:900; letter-spacing:-.02em; text-transform:uppercase; text-align:center; }
-        .title span { color:#ffd60a; }
-        img { width:320px; height:320px; }
-        .sub { font-size:18px; color:#b9b4a4; text-align:center; letter-spacing:.05em; text-transform:uppercase; }
-        .url { font-size:13px; color:#ffd60a; font-family:monospace; margin-top:-8px; }
-        @media print { body { background:#fff; color:#000; } .title span { color:#e6a800; } .url { color:#000; } }
-      </style></head><body>
-      <div class="title">EL <span>GHETTO</span></div>
-      <img src="${qrHD}" alt="QR El Ghetto"/>
-      <div class="sub">Escaneá y reservá tu turno</div>
-      <div class="url">${siteUrl}</div>
-      </body></html>
-    `);
+    const css = '* {margin:0;padding:0;box-sizing:border-box}'
+      + 'body{background:#0d0d0d;color:#f4f1e8;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:24px;padding:40px}'
+      + '.t{font-size:48px;font-weight:900;text-transform:uppercase;text-align:center}'
+      + '.t span{color:#ffd60a}'
+      + 'img{width:320px;height:320px}'
+      + '.s{font-size:18px;color:#b9b4a4;text-align:center;letter-spacing:.05em;text-transform:uppercase}'
+      + '.u{font-size:13px;color:#ffd60a;font-family:monospace}';
+    const html = '<!DOCTYPE html><html><head><title>QR El Ghetto</title><style>' + css + '</style></head><body>'
+      + '<div class="t">EL <span>GHETTO</span></div>'
+      + '<img src="' + qrHD + '" alt="QR"/>'
+      + '<div class="s">Escaneá y reservá tu turno</div>'
+      + '<div class="u">' + siteUrl + '</div>'
+      + '</body></html>';
+    w.document.write(html);
     w.document.close();
-    setTimeout(() => w.print(), 600);
+    setTimeout(function() { w.print(); }, 600);
   };
 
   return (
