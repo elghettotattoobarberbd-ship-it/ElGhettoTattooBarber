@@ -130,7 +130,7 @@ function HomeVideo() {
                   </div>
                   <div className="hv-placeholder-title">Reel <span className="yellow">próximamente.</span></div>
                   <div className="hv-placeholder-sub">
-                    {loaded ? 'Subilo desde el panel admin' : 'Cargando…'}
+                    {loaded ? '' : 'Cargando…'}
                   </div>
                 </div>
               )}
