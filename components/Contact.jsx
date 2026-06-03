@@ -57,7 +57,7 @@ function Contact() {
 
           return {
             day: day.label,
-            blocks: openRows.map((row) => [normalizeTime(row.open_time), normalizeTime(row.close_time)]),
+            blocks: openRows.map((row) => ({ from: normalizeTime(row.open_time), to: normalizeTime(row.close_time) })),
             closed: false,
           };
         });

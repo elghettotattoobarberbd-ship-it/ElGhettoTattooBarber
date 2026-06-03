@@ -40,39 +40,6 @@ const STYLES = [
   { slug: "fineline",         label: "Fine Line" },
 ];
 
-const ARTISTS = [
-  {
-    slug: "celeste-ibarra",
-    name: "Celeste Agostina Ibarra",
-    role: "Tatuadora",
-    handle: "@celesteagostina.ttt",
-    experience: 4.5,
-    bio: "Tatuadora hace 4 años y medio. Especialista en black & grey y realismo, pero también laburo full color, watercolor, neo tradicional y fineline. Cada pieza es única — vení, charlamos el diseño y lo armamos juntos.",
-    specialties: ["Black & Grey", "Realismo", "Puntillismo", "Full Color", "Watercolor", "Tradicional / Neo Trad", "Fine Line"],
-    stats: [
-      { num: "4.5", lbl: "Años tatuando" },
-      { num: "500+", lbl: "Piezas hechas" },
-      { num: "7", lbl: "Estilos" },
-    ],
-  },
-];
-
-const BARBER_TEAM = {
-  slug: "equipo-barberia",
-  name: "Equipo de Barbería",
-  role: "Barberos",
-  handle: "@elghetto.ttt",
-  bio: "Somos un equipo de barberos profesionales que va a llevar tu corte al próximo nivel — combinado con un espacio diferenciado donde se plasma arte en la piel. Acá vivís una experiencia completa, con un equipo dispuesto a llenar tus expectativas.",
-  services: ["Fades", "Clásicos", "Barbas", "Modernos", "Niños", "Diseños"],
-  stats: [
-    { num: "∞",   lbl: "Cortes hechos" },
-    { num: "6",   lbl: "Servicios" },
-    { num: "7/7", lbl: "Días en pie" },
-  ],
-};
-
-window.BARBER_TEAM = BARBER_TEAM;
-
 // Gallery items — placeholder palettes so cards have visual variety until real photos are uploaded
 const GALLERY = [
   { id: 1, style: "black-and-grey", title: "Lobo en el bosque",     hue: 0,   light: 12, size: "tall"  },
@@ -127,7 +94,6 @@ const FAQS = [];
 window.STUDIO = STUDIO;
 window.STYLES = STYLES;
 window.TATTOO_STYLES = STYLES;
-window.ARTISTS = ARTISTS;
 window.GALLERY = GALLERY;
 window.TATTOO_GALLERY = GALLERY;
 window.TESTIMONIALS = TESTIMONIALS;
