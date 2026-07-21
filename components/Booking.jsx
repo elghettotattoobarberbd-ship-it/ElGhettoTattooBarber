@@ -1,7 +1,6 @@
 // components/Booking.jsx
 function Booking() {
   const [step, setStep] = React.useState(1);
-  const TOTAL = 4;
 
   const [data, setData] = React.useState({
     service:     '',
@@ -16,12 +15,16 @@ function Booking() {
 
   const update = (k, v) => setData((d) => ({ ...d, [k]: v }));
 
+  const sequence = data.service === 'barber' ? [1, 4] : [1, 2, 3, 4];
+  const TOTAL = sequence.length;
+  const page = sequence[step - 1] || 1;
+
   const canAdvance = {
     1: !!data.service,
     2: data.service === 'barber' ? true : !!data.style,
     3: !!data.description && !!data.bodyPart,
     4: !!data.name && !!data.phone,
-  }[step];
+  }[page];
 
   const buildMessage = () => {
     const lines = [
@@ -36,8 +39,8 @@ function Booking() {
       if (data.size) lines.push(`▸ Tamaño aprox: ${data.size}`);
       lines.push(`▸ Idea: ${data.description}`);
     } else {
-      lines.push(`▸ Detalle: ${data.bodyPart}`);
-      lines.push(`▸ Idea / corte: ${data.description}`);
+      if (data.bodyPart) lines.push(`▸ Detalle: ${data.bodyPart}`);
+      if (data.description) lines.push(`▸ Idea / corte: ${data.description}`);
     }
     if (data.notes) lines.push(`▸ Comentario: ${data.notes}`);
     lines.push(``, `Nombre: ${data.name}`, `Teléfono: ${data.phone}`);
@@ -215,10 +218,10 @@ function Booking() {
       <div className="container">
         <div className="booking-wrap" style={{ display: 'block' }}>
           <div className="booking-form">
-            {step === 1 && renderStep1()}
-            {step === 2 && renderStep2()}
-            {step === 3 && renderStep3()}
-            {step === 4 && renderStep4()}
+            {page === 1 && renderStep1()}
+            {page === 2 && renderStep2()}
+            {page === 3 && renderStep3()}
+            {page === 4 && renderStep4()}
 
             <div className="form-actions">
               {step > 1
